@@ -39,8 +39,9 @@ app.http('paymentstatus', {
         }
      }
 console.log(studentdata);
-let status = ""
-if(studentdata.TotalFee =< studentdata.PaidAmount){
+let status = "";
+
+if(studentdata.TotalFee <=  studentdata.PaidAmount){
     status = "PAID"
 }
 else if (studentdata.TotalFee > studentdata.PaidAmount){
