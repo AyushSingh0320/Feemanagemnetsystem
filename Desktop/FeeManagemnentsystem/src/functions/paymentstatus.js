@@ -39,14 +39,29 @@ app.http('paymentstatus', {
         }
      }
 console.log(studentdata);
-
-if(studentdata.TotalFee == studentdata.PaidAmount){
-    return "PAID"
+let status = ""
+if(studentdata.TotalFee =< studentdata.PaidAmount){
+    status = "PAID"
 }
-else if (studentdata.TotalFee == studentdata.PaidAmount){
-
+else if (studentdata.TotalFee > studentdata.PaidAmount){
+   status =  "PARTIALLY PAID"
 }
+else if (new Date(s.DueDate) < new Date() && s.PaidAmount < s.TotalFee) {
+      status = "Overdue";
+    }
 
+    context.res = {
+      status: 200,
+      body: {
+        StudentID: studentId,
+        Name: s.Name,
+        Course: s.Course,
+        TotalFee: s.TotalFee,
+        PaidAmount: s.PaidAmount,
+        DueDate: s.DueDate,
+        PaymentStatus: status
+      }
+    };
 
 
 
