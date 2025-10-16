@@ -8,7 +8,7 @@ app.http('paymentstatus', {
     methods: ['GET', 'POST'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
-       const  studentid = request.query.studentid || request.body.studentid ;
+       const  studentid = request.query.get('studentid') || (await request.json())?.studentId; ;
          if (!studentid) {
         return context.res = { 
         status: 404, 
@@ -67,7 +67,10 @@ else if (new Date(s.DueDate) < new Date() && s.PaidAmount < s.TotalFee) {
 
 
         } catch (error) {
-            
+    context.log.error("Database error:", err);
+    context.res = {
+    status: 500,
+    body: { error: "Internal server error" }
         }
 
-    }})
+    }}})
