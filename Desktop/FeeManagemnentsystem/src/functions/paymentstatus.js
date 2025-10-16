@@ -40,7 +40,12 @@ app.http('paymentstatus', {
      }
 console.log(studentdata);
 
-if (studentdata.)
+if(studentdata.TotalFee == studentdata.PaidAmount){
+    return "PAID"
+}
+else if (studentdata.TotalFee == studentdata.PaidAmount){
+
+}
 
 
 
