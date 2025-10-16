@@ -9,8 +9,8 @@ app.http('paymentstatus', {
     authLevel: 'anonymous',
     handler: async (request, context) => {
         context.log('Payment status function invoked');
-       const  studentid = request.query.get('studentid') || (await request.json())?.studentId; ;
-         if (!studentid) {
+       const  StudentID = request.query.get('studentID') || (await request.json())?.studentID;
+         if (!StudentID) {
         return context.res = { 
         status: 404, 
         body: { message: "Student ID required" } };
@@ -19,10 +19,12 @@ app.http('paymentstatus', {
               const pool = await sql.connect(process.env.SQL_CONNECTION_STRING , 
                 context.log("Database connected")
               );
+              context.log("hwloo");
+
       const result = await pool.request()
-      .input('id', sql.Int, studentid)
-      .query(`SELECT Name, Course, TotalFee, PaidAmount, DueDate FROM Students WHERE StudentID = @id`);
-//    context.log(result);
+      .input('id', sql.Int, StudentID)
+      .query(`SELECT Name, Course, TotalFee, PaidAmount, DueDate FROM STUDENT_TABLE WHERE StudentID = @id`);
+   context.log(result);
       if(!result){
          return context.res = { 
         status: 404, 
@@ -30,7 +32,7 @@ app.http('paymentstatus', {
     }
 
      const studentdata = result.recordsets[0]
-
+    context.log("studentdata:", studentdata);
      if(!studentdata){
         return context.res = {
             status: 400,
@@ -39,41 +41,40 @@ app.http('paymentstatus', {
             }
         }
      }
-console.log(studentdata);
+context.log("helloo after studentdata");
 let status = "";
 
-if(studentdata.TotalFee <=  studentdata.PaidAmount){
+if(studentdata[0].TotalFee <=  studentdata[0].PaidAmount){
     status = "PAID"
 }
-else if (studentdata.TotalFee > studentdata.PaidAmount){
+//  context.log("helo from first if")
+
+
+else if (studentdata[0].TotalFee > studentdata[0].PaidAmount){
    status =  "PARTIALLY PAID"
 }
-else if (new Date(s.DueDate) < new Date() && s.PaidAmount < s.TotalFee) {
+else if (new Date(studentdata[0].DueDate) < new Date() && studentdata[0].PaidAmount < studentdata[0].TotalFee) {
       status = "Overdue";
     }
-
-    context.res = {
-      status: 200,
-      body: {
-        StudentID: studentId,
-        Name: s.Name,
-        Course: s.Course,
-        TotalFee: s.TotalFee,
-        PaidAmount: s.PaidAmount,
-        DueDate: s.DueDate,
-        PaymentStatus: status
-      }
-    };
-
-
-
-        } catch (error) {
-    context.log.error("Database error:", err);
-    context.res = {
-    status: 500,
-    body: { error: "Internal server error" }
-        }
-
-    }}})
+context.log("last log")
+    return {
+          jsonBody: { 
+            statuscode: 200, 
+            Name: studentdata[0].Name,
+            Course: studentdata[0].Course,
+            TotalFee: studentdata[0].TotalFee,
+            PaidAmount: studentdata[0].PaidAmount,
+            DueDate: studentdata[0].DueDate,
+            PaymentStatus: status
+        }};
+    } catch (error) {
+    context.log.error("Database error:", error);
+   return {
+    jsonBody: { 
+        statuscode: 500, 
+        message: "Internal Server Error" 
+    }
+   }
+}}})
 
 // module.exports = paymentstatus;
