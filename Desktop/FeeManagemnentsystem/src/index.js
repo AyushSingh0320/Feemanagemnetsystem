@@ -1,5 +1,6 @@
 const { app } = require('@azure/functions');
-require('./paymentstatus.js'); 
+// const paymentstatus = require('./paymentstatus');
 app.setup({
     enableHttpStream: true,
 });
+// app.http('paymentstatus', paymentstatus);

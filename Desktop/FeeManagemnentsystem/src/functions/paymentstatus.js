@@ -8,6 +8,7 @@ app.http('paymentstatus', {
     methods: ['GET', 'POST'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
+        context.log('Payment status function invoked');
        const  studentid = request.query.get('studentid') || (await request.json())?.studentId; ;
          if (!studentid) {
         return context.res = { 
@@ -16,12 +17,12 @@ app.http('paymentstatus', {
         }
         try {
               const pool = await sql.connect(process.env.SQL_CONNECTION_STRING , 
-                console.log("Database connected")
+                context.log("Database connected")
               );
       const result = await pool.request()
       .input('id', sql.Int, studentid)
       .query(`SELECT Name, Course, TotalFee, PaidAmount, DueDate FROM Students WHERE StudentID = @id`);
-
+//    context.log(result);
       if(!result){
          return context.res = { 
         status: 404, 
@@ -74,3 +75,5 @@ else if (new Date(s.DueDate) < new Date() && s.PaidAmount < s.TotalFee) {
         }
 
     }}})
+
+// module.exports = paymentstatus;
